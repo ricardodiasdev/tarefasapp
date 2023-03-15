@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
-import Login from "./src/components/Login";
+import Sign from "./src/components/Sign";
 
 export default function App() {
   const [user, setUser] = useState(null);
   return (
     <SafeAreaView style={styles.container}>
-      {!user ? (<Login/>):(<Text>Tarefas</Text>)}
+      {!user ? (<Sign/>):(<Text>Tarefas</Text>)}
     </SafeAreaView>
   );
 }

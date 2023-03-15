@@ -7,17 +7,53 @@ import {
 } from "react-native";
 import React, { useState, useRef } from "react";
 
-const Login = () => {
+import firebase from "../../services/firebaseConnection";
+
+const Sign = () => {
   const [type, setType] = useState("login");
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const inputRef = useRef(null);
 
-  const handleLogin = () => {
-    alert("Login...");
-    setEmail("");
-    setPassword("");
-    inputRef.current.focus();
+  const handleButtom =  () => {
+    if (type === "login") {
+      const user =  firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then((user) => {
+          console.log(user.user);
+          alert("Login...");
+          setEmail("");
+          setPassword("");
+          inputRef.current.focus();
+        })
+        .catch((err) => {
+          alert("Algo deu errado...");
+          console.log(err);
+          setEmail("");
+          setPassword("");
+          inputRef.current.focus();
+          return;
+        });
+    } else {
+      const user = firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then((user) => {
+          console.log(user.user);
+          alert("Cadastrado...");
+          setEmail("");
+          setPassword("");
+          inputRef.current.focus();
+        })
+        .catch((err) => {
+          alert("Algo deu errado...");
+          console.log(err);
+          setEmail("");
+          setPassword("");
+          inputRef.current.focus();
+        });
+    }
   };
   return (
     <View style={styles.container}>
@@ -44,12 +80,12 @@ const Login = () => {
       />
       <TouchableOpacity
         style={[
-          styles.handleLogin,
+          styles.handleButtom,
           { backgroundColor: type === "login" ? "#3ea6f2" : "#141414" },
         ]}
-        onPress={handleLogin}
+        onPress={handleButtom}
       >
-        <Text style={styles.loginText}>
+        <Text style={styles.buttonText}>
           {type === "login" ? "Acessar" : "Cadastrar"}
         </Text>
       </TouchableOpacity>
@@ -66,7 +102,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Sign;
 
 const styles = StyleSheet.create({
   container: {
@@ -88,15 +124,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#141414",
+    fontSize: 25,
   },
-  handleLogin: {
+  handleButtom: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#141414",
     height: 45,
     marginBottom: 10,
   },
-  loginText: {
+  buttonText: {
     color: "#fff",
     fontSize: 17,
   },
