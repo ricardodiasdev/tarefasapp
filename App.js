@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Keyboard } from "react-native";
 import {
   StyleSheet,
   Text,
@@ -10,14 +11,11 @@ import {
 } from "react-native";
 import Sign from "./src/components/Sign";
 import TaskList from "./src/components/TaskList";
-
-let tasks = [
-  { key: "1", nome: "Comprar pão" },
-  { key: "2", nome: "Estudar programação" },
-];
+import firebase from "./src/services/firebaseConnection";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState();
 
   function handleDelete(key) {
@@ -26,6 +24,28 @@ export default function App() {
 
   function handleEdit(data) {
     console.log(data);
+  }
+
+  function handleAdd() {
+    if (newTask) {
+      let tarefas = firebase.database().ref("tarefas").child(user);
+      let chave = tarefas.push().key;
+
+      tarefas
+        .child(chave)
+        .set({ nome: newTask })
+        .then(() => {
+          const data = {
+            key: chave,
+            nome: newTask,
+          };
+          setTasks((oldTasks) => [...oldTasks, data]);
+        });
+      setNewTask("");
+      Keyboard.dismiss();
+    } else {
+      return;
+    }
   }
 
   return (
@@ -41,15 +61,22 @@ export default function App() {
               value={newTask}
               onChangeText={(text) => setNewTask(text)}
             />
-            <TouchableOpacity style={styles.containerButtonAdd}>
+            <TouchableOpacity
+              style={styles.containerButtonAdd}
+              onPress={handleAdd}
+            >
               <Text style={styles.buttonText}>+</Text>
             </TouchableOpacity>
           </View>
           <FlatList
-            data={tasks}
             keyExtractor={(item) => item.key}
+            data={tasks}
             renderItem={({ item }) => (
-              <TaskList data={item} deleteItem={handleDelete} editItem={handleEdit}/>
+              <TaskList
+                data={item}
+                deleteItem={handleDelete}
+                editItem={handleEdit}
+              />
             )}
           />
         </View>
