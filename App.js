@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Keyboard } from "react-native";
 import {
   StyleSheet,
@@ -17,6 +17,28 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState();
+
+  useEffect(() => {
+    function getUser() {
+      if (user) {
+        firebase
+          .database()
+          .ref("tarefas")
+          .child(user)
+          .once("value", (snapshot) => {
+            setTasks([]);
+            snapshot?.forEach((childItem) => {
+              let data = {
+                key: childItem.key,
+                nome: childItem.val().nome,
+              };
+              setTasks((oldTasks) => [...oldTasks, data]);
+            });
+          });
+      }
+    }
+    getUser();
+  }, [user]);
 
   function handleDelete(key) {
     alert(key);
