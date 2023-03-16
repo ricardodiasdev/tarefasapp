@@ -15,9 +15,9 @@ const Sign = ({changeStatus}) => {
   const [password, setPassword] = useState();
   const inputRef = useRef();
 
-  const handleButtom =  () => {
+  const handleButtom =  async () => {
     if (type === "login") {
-      const user =  firebase
+      const user = await firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then((user) => {
@@ -34,7 +34,7 @@ const Sign = ({changeStatus}) => {
           return;
         });
     } else {
-      const user = firebase
+      const user =await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then((user) => {
