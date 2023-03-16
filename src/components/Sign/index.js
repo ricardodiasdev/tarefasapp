@@ -9,11 +9,11 @@ import React, { useState, useRef } from "react";
 
 import firebase from "../../services/firebaseConnection";
 
-const Sign = () => {
+const Sign = ({changeStatus}) => {
   const [type, setType] = useState("login");
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const inputRef = useRef(null);
+  const inputRef = useRef();
 
   const handleButtom =  () => {
     if (type === "login") {
@@ -21,11 +21,9 @@ const Sign = () => {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then((user) => {
-          console.log(user.user);
+         changeStatus(user.user.uid);
           alert("Login...");
-          setEmail("");
-          setPassword("");
-          inputRef.current.focus();
+         
         })
         .catch((err) => {
           alert("Algo deu errado...");
@@ -40,11 +38,9 @@ const Sign = () => {
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then((user) => {
-          console.log(user.user);
+          changeStatus(user.user.uid);
           alert("Cadastrado...");
-          setEmail("");
-          setPassword("");
-          inputRef.current.focus();
+          
         })
         .catch((err) => {
           alert("Algo deu errado...");

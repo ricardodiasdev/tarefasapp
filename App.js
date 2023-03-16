@@ -6,7 +6,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   return (
     <SafeAreaView style={styles.container}>
-      {!user ? (<Sign/>):(<Text>Tarefas</Text>)}
+      {!user ? (<Sign changeStatus={(user) => setUser(user)}/>):(<Text>Tarefas</Text>)}
     </SafeAreaView>
   );
 }
