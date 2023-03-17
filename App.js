@@ -9,6 +9,8 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
+import Feather from "react-native-vector-icons/Feather";
+
 import Sign from "./src/components/Sign";
 import TaskList from "./src/components/TaskList";
 import firebase from "./src/services/firebaseConnection";
@@ -61,11 +63,17 @@ export default function App() {
     inputRef.current.focus();
   }
 
+  function cancelEdit() {
+    setKey("");
+    setNewTask("");
+    Keyboard.dismiss();
+  }
+
   function handleAdd() {
     if (newTask === "") {
       return;
     }
-    
+
     if (key !== "") {
       firebase
         .database()
@@ -76,10 +84,10 @@ export default function App() {
           nome: newTask,
         })
         .then(() => {
-          const taskIndex = tasks.findIndex(item => item.key === key)
-          const taskClone =tasks;
-          taskClone[taskIndex].nome = newTask
-          setTasks([...taskClone])
+          const taskIndex = tasks.findIndex((item) => item.key === key);
+          const taskClone = tasks;
+          taskClone[taskIndex].nome = newTask;
+          setTasks([...taskClone]);
         });
       Keyboard.dismiss();
       setNewTask("");
@@ -110,6 +118,17 @@ export default function App() {
         <Sign changeStatus={(user) => setUser(user)} />
       ) : (
         <View>
+          {key.length > 0 && (
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity onPress={cancelEdit}>
+                <Feather name="x-circle" size={20} color="#FF0000" />
+              </TouchableOpacity>
+              <Text style={{ marginLeft: 5, color: "#FF0000" }}>
+                Você está editando uma tarefa!
+              </Text>
+            </View>
+          )}
+
           <View style={styles.containerTask}>
             <TextInput
               style={styles.containerInput}
@@ -148,6 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F2f6fc",
     paddingTop: 25,
     paddingHorizontal: 10,
+    marginTop: 20,
   },
   containerTask: {
     flexDirection: "row",
